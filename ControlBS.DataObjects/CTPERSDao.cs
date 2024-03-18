@@ -22,11 +22,11 @@ namespace ControlBS.DataObjects
         {
             return Db.ExecuteNonQuery("dbo.spu_CTPERS_delete", PERSIDEN) == 1;
         }
-        public virtual CTPERS Get(int PERSIDEN)
+        public virtual CTPERS? Get(int PERSIDEN)
         {
-            CTPERS gotCTPERS = new CTPERS();
+            CTPERS? gotCTPERS = new CTPERS();
             DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTPERS_get", PERSIDEN).Tables[0];
-            gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTPERS>(dtDatos.Rows[0]) : gotCTPERS;
+            gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTPERS>(dtDatos.Rows[0]) : null;
             return gotCTPERS;
         }
         public virtual bool Exist(int PERSIDEN)

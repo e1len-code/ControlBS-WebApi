@@ -10,6 +10,8 @@ namespace ControlBS.WebApi.Controllers
     public class LogController : Controller
     {
         private IHostEnvironment Environment;
+        private ErrorResponse? error;
+
 
         public LogController(IWebHostEnvironment _environment)
         {
@@ -26,17 +28,18 @@ namespace ControlBS.WebApi.Controllers
                 // Check if file exists
                 if (!System.IO.File.Exists(_logFilePath))
                 {
-                    string message = String.Format("Excepcion: '{0}'\nSource: \nStackTrace: \n'", "El archivo de log no existe.");
-                    Log.Error(message);
-                    return StatusCode(500, new { error = "El archivo de log no existe." });
+                    error = new ErrorResponse { message = String.Format("No se ha encontrado el archivo de la fecha {0}  .log", datetime), source = "GetLog - LogController", stackTrace = "" };
+                    Log.Error(error.ToString());
+                    return StatusCode(StatusCodes.Status404NotFound, error.ToString());
                 }
                 var fileStream = new FileStream(_logFilePath, FileMode.Open, FileAccess.Read);
                 return File(fileStream, "text/plain", Path.GetFileName(_logFilePath));
             }
             catch (Exception e)
             {
-                string message = String.Format("Excepcion: '{0}'\nSource: {1}\nStackTrace: '{2}\n'", e.Message, e.Source, e.StackTrace);
-                Log.Error(message);
+                error = new ErrorResponse { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
+                Log.Error(error.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
                 throw;
             }
         }

@@ -1,7 +1,10 @@
+using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using ControlBS.BusinessObjects;
 using ControlBS.DataObjects;
 using FluentValidation;
 using FluentValidation.Results;
+
 namespace ControlBS.Facade
 {
     public partial class CTPERSFacade
@@ -20,37 +23,50 @@ namespace ControlBS.Facade
 
         public virtual bool ExistError() => existError;
 
-        public virtual async Task<bool> Save(CTPERS oCTPERS)
+        public virtual async Task<Response<bool>> Save(CTPERS oCTPERS)
         {
+            Response<bool> oResponse = new Response<bool>();
             ValidationResult result = await _validator.ValidateAsync(oCTPERS);
             if (!result.IsValid)
             {
-                foreach (var failure in result.Errors)
+                foreach (ValidationFailure failure in result.Errors)
                 {
-                    error += "Property " + failure.PropertyName + " failed validation. Error was: " + failure.ErrorMessage + "\n";
+                    oResponse.errors.Add(new ErrorResponse { message = failure.ErrorMessage, source = "Facade - Validaciones", stackTrace = "" });
                 }
                 existError = true;
-                return false;
+                return oResponse;
             }
-            return oCTPERSDao.Save(oCTPERS);
+            return new Response<bool> { value = oCTPERSDao.Save(oCTPERS) };
         }
-        public virtual bool Delete(int ATTIDEN)
+        public virtual Response<bool> Delete(int ATTIDEN)
         {
-            if (Exist(ATTIDEN))
-                return oCTPERSDao.Delete(ATTIDEN);
-            else return false;
+            Response<bool> oResponse = new Response<bool>();
+            if (!oCTPERSDao.Exist(ATTIDEN))
+            {
+                oResponse.value = false;
+                oResponse.errors.Add(new ErrorResponse { message = "No se ha encontrado el elemento para eliminar", source = "Facade - Validaciones", stackTrace = "" });
+                return oResponse;
+            }
+            oResponse.value = oCTPERSDao.Delete(ATTIDEN);
+            return oResponse;
         }
-        public virtual CTPERS Get(int ATTIDEN)
+        public virtual Response<CTPERS?> Get(int ATTIDEN)
         {
-            return oCTPERSDao.Get(ATTIDEN);
+            Response<CTPERS?> oResponse = new Response<CTPERS?>();
+            oResponse.value = oCTPERSDao.Get(ATTIDEN);
+            return oResponse;
         }
-        public virtual bool Exist(int ATTIDEN)
+        public virtual Response<bool> Exist(int ATTIDEN)
         {
-            return oCTPERSDao.Exist(ATTIDEN);
+            Response<bool> oResponse = new Response<bool>();
+            oResponse.value = oCTPERSDao.Exist(ATTIDEN);
+            return oResponse;
         }
-        public virtual List<CTPERS> List()
+        public virtual Response<List<CTPERS>> List()
         {
-            return oCTPERSDao.List();
+            Response<List<CTPERS>> oResponse = new Response<List<CTPERS>>();
+            oResponse.value = oCTPERSDao.List();
+            return oResponse;
         }
     }
 }

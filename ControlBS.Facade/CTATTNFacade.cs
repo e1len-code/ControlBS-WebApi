@@ -21,34 +21,51 @@ namespace ControlBS.Facade
 
         public virtual bool ExistError() => existError;
 
-        public virtual async Task<bool> Save(CTATTN oCTATTN)
+        public virtual async Task<Response<bool>> Save(CTATTN oCTATTN)
         {
+            Response<bool> oResponse = new Response<bool>();
             ValidationResult result = await _validator.ValidateAsync(oCTATTN);
             if (!result.IsValid)
             {
-                error = string.Concat("El valor ", oCTATTN.ATTNIDEN, " no puede ser menor a 0");
+                foreach (ValidationFailure failure in result.Errors)
+                {
+                    oResponse.errors.Add(new ErrorResponse { message = failure.ErrorMessage, source = "Facade - Validaciones", stackTrace = "" });
+                }
+
                 existError = true;
-                return false;
+                return oResponse;
             }
-            return oCTATTNDao.Save(oCTATTN);
+            return new Response<bool> { value = oCTATTNDao.Save(oCTATTN) };
         }
-        public virtual bool Delete(int ATTIDEN)
+        public virtual Response<bool> Delete(int ATTIDEN)
         {
-            if (Exist(ATTIDEN))
-                return oCTATTNDao.Delete(ATTIDEN);
-            else return false;
+            Response<bool> oResponse = new Response<bool>();
+            if (!oCTATTNDao.Exist(ATTIDEN))
+            {
+                oResponse.value = false;
+                oResponse.errors.Add(new ErrorResponse { message = "No se ha encontrado el elemento para eliminar", source = "Facade - Validaciones", stackTrace = "" });
+                return oResponse;
+            }
+            oResponse.value = oCTATTNDao.Delete(ATTIDEN);
+            return oResponse;
         }
-        public virtual CTATTN Get(int ATTIDEN)
+        public virtual Response<CTATTN?> Get(int ATTIDEN)
         {
-            return oCTATTNDao.Get(ATTIDEN);
+            Response<CTATTN?> oResponse = new Response<CTATTN?>();
+            oResponse.value = oCTATTNDao.Get(ATTIDEN);
+            return oResponse;
         }
-        public virtual bool Exist(int ATTIDEN)
+        public virtual Response<bool> Exist(int ATTIDEN)
         {
-            return oCTATTNDao.Exist(ATTIDEN);
+            Response<bool> oResponse = new Response<bool>();
+            oResponse.value = oCTATTNDao.Exist(ATTIDEN);
+            return oResponse;
         }
-        public virtual List<CTATTN> List()
+        public virtual Response<List<CTATTN>> List()
         {
-            return oCTATTNDao.List();
+            Response<List<CTATTN>> oResponse = new Response<List<CTATTN>>();
+            oResponse.value = oCTATTNDao.List();
+            return oResponse;
         }
 
     }

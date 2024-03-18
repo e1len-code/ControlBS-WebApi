@@ -1,7 +1,6 @@
 using ControlBS.BusinessObjects;
 using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
-using ExceptionCustom = ControlBS.BusinessObjects.Excepcion;
 using Serilog;
 
 namespace ControlBS.WebApi.Controllers
@@ -9,26 +8,26 @@ namespace ControlBS.WebApi.Controllers
     [Route("[controller]")]
     public class AttendanceController : Controller
     {
-        private ExceptionCustom error;
+        private Response<ErrorResponse> errorResponse;
         private CTATTNFacade oCTATTNFacade;
         public AttendanceController()
         {
             oCTATTNFacade = new CTATTNFacade();
-            error = new ExceptionCustom();
+            errorResponse = new Response<ErrorResponse>();
         }
         [HttpGet]
         public IActionResult List()
         {
             try
             {
-                CTATTNFacade oCTATTNFacade = new CTATTNFacade();
-                return Ok(oCTATTNFacade.List());
+                Response<List<CTATTN>> oResponse = oCTATTNFacade.List();
+                return StatusCode(StatusCodes.Status200OK, oResponse);
             }
             catch (Exception e)
             {
-                error = new ExceptionCustom { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }
@@ -38,24 +37,15 @@ namespace ControlBS.WebApi.Controllers
         {
             try
             {
-                bool _saved = await oCTATTNFacade.Save(oCTATTN);
-                if (_saved)
-                {
-                    return Ok(_saved);
-                }
-                else
-                {
-                    error = new ExceptionCustom { message = oCTATTNFacade.GetError(), source = "", stackTrace = "" };
-                    Log.Error(error.ToString());
-                    return StatusCode(StatusCodes.Status400BadRequest, new { error.message })
-                    ;
-                }
+                Response<bool> oResponse = await oCTATTNFacade.Save(oCTATTN);
+                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
+                return StatusCode(oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
-                error = new ExceptionCustom { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }
@@ -64,29 +54,32 @@ namespace ControlBS.WebApi.Controllers
         {
             try
             {
-                return Ok(oCTATTNFacade.Get(ATTIDEN));
+                Response<CTATTN?> oResponse = oCTATTNFacade.Get(ATTIDEN);
+                oResponse.statusCode = oResponse.value != null ? StatusCodes.Status200OK : StatusCodes.Status404NotFound;
+                return StatusCode(oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
-                error = new ExceptionCustom { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }
         [HttpDelete("{ATTNIDEN}")]
-        public IActionResult Delete(int ATTIDEN)
+        public IActionResult Delete(int ATTNIDEN)
         {
             try
             {
-                CTATTNFacade oCTATTNFacade = new CTATTNFacade();
-                return Ok(oCTATTNFacade.Delete(ATTIDEN));
+                Response<bool> oResponse = oCTATTNFacade.Delete(ATTNIDEN);
+                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
+                return StatusCode(oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
-                error = new ExceptionCustom { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }

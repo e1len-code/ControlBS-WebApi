@@ -2,22 +2,19 @@ using ControlBS.BusinessObjects;
 using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
 using Serilog;
-using FluentValidation;
-using ExcepcionCustom = ControlBS.BusinessObjects.Excepcion;
-using ControlBS.DataObjects;
+using System.Reflection.PortableExecutable;
 
 namespace ControlBS.WebApi.Controllers
 {
     [Route("[controller]")]
     public class PersonController : Controller
     {
-        private ExcepcionCustom error;
         private CTPERSFacade oCTPERSFacade;
-
+        private Response<ErrorResponse> errorResponse;
         public PersonController()
         {
+            errorResponse = new Response<ErrorResponse>();
             oCTPERSFacade = new CTPERSFacade();
-            error = new ExcepcionCustom();
         }
 
         [HttpGet]
@@ -25,13 +22,14 @@ namespace ControlBS.WebApi.Controllers
         {
             try
             {
-                return Ok(oCTPERSFacade.List());
+                Response<List<CTPERS>> oResponse = oCTPERSFacade.List();
+                return StatusCode(oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
-                error = new ExcepcionCustom { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }
@@ -41,23 +39,15 @@ namespace ControlBS.WebApi.Controllers
         {
             try
             {
-                bool _saved = await oCTPERSFacade.Save(oCTPERS);
-                if (_saved)
-                {
-                    return Ok(_saved);
-                }
-                else
-                {
-                    error = new Excepcion { message = oCTPERSFacade.GetError(), source = "", stackTrace = "" };
-                    Log.Error(error.ToString());
-                    return StatusCode(StatusCodes.Status400BadRequest, new { error.message });
-                }
+                Response<bool> oResponse = await oCTPERSFacade.Save(oCTPERS);
+                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
+                return StatusCode(oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
-                error = new Excepcion { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }
@@ -66,13 +56,15 @@ namespace ControlBS.WebApi.Controllers
         {
             try
             {
-                return Ok(oCTPERSFacade.Get(PERSIDEN));
+                Response<CTPERS?> oResponse = oCTPERSFacade.Get(PERSIDEN);
+                oResponse.statusCode = oResponse.value != null ? StatusCodes.Status200OK : StatusCodes.Status404NotFound;
+                return StatusCode(oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
-                error = new Excepcion { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }
@@ -81,13 +73,15 @@ namespace ControlBS.WebApi.Controllers
         {
             try
             {
-                return Ok(oCTPERSFacade.Delete(PERSIDEN));
+                Response<bool> oResponse = oCTPERSFacade.Delete(PERSIDEN);
+                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
+                return StatusCode(oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
-                error = new Excepcion { message = e.Message, source = e.Source, stackTrace = e.StackTrace };
-                Log.Error(error.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error.message });
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
                 throw;
             }
         }
