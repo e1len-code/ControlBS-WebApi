@@ -1,5 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 using ControlBS.Facade;
+using ControlBS.BusinessObjects.Response;
 using ControlBS.BusinessObjects;
 
 namespace ControlBS.TestApi;
