@@ -1,4 +1,4 @@
-using ControlBS.BusinessObjects;
+using ControlBS.BusinessObjects.Response;
 using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
 using Serilog;

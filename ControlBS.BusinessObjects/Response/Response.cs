@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace ControlBS.BusinessObjects
+namespace ControlBS.BusinessObjects.Response
 {
 
     public class Response<T>

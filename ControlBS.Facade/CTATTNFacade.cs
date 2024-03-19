@@ -1,4 +1,4 @@
-using System.Data.Common;
+using ControlBS.BusinessObjects.Response;
 using ControlBS.BusinessObjects;
 using ControlBS.DataObjects;
 using FluentValidation;

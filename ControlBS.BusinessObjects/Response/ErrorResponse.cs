@@ -2,7 +2,7 @@
 using System.Data;
 using FluentValidation;
 
-namespace ControlBS.BusinessObjects
+namespace ControlBS.BusinessObjects.Response
 {
 
     public class ErrorResponse
