@@ -10,7 +10,7 @@ namespace ControlBS.DataObjects
 
         public virtual bool Save(CTATTN oCTATTN)
         {
-            using (DbCommand dbCmd = Db.GetStoredProcCommand("dbo.spu_CTPERS_Save"))
+            using (DbCommand dbCmd = Db.GetStoredProcCommand("dbo.spu_CTATTN_Save"))
             {
                 Db.AddInParameter(dbCmd, "ATTNIDEN", DbType.Int32, oCTATTN.ATTNIDEN);
                 Db.AddInParameter(dbCmd, "PERSIDEN", DbType.Int32, oCTATTN.PERSIDEN);

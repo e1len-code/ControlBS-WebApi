@@ -19,7 +19,6 @@ namespace ControlBS.BusinessObjects
         {
             RuleFor(x => x.ATTNIDEN).NotNull();
             RuleFor(x => x.PERSIDEN).NotNull();
-            RuleFor(x => x.ATTNUBIC).Empty();
             RuleFor(x => x.ATTNDATE).NotNull();
         }
     }
