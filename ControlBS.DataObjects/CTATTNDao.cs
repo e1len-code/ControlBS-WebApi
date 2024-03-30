@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using ControlBS.BusinessObjects;
+using ControlBS.BusinessObjects.Models;
 
 namespace ControlBS.DataObjects
 {
@@ -14,7 +15,7 @@ namespace ControlBS.DataObjects
             {
                 Db.AddInParameter(dbCmd, "ATTNIDEN", DbType.Int32, oCTATTN.ATTNIDEN);
                 Db.AddInParameter(dbCmd, "PERSIDEN", DbType.Int32, oCTATTN.PERSIDEN);
-                Db.AddInParameter(dbCmd, "ATTNUBIC", DbType.String, oCTATTN.ATTNIDEN);
+                Db.AddInParameter(dbCmd, "ATTNUBIC", DbType.String, oCTATTN.ATTNUBIC);
                 Db.AddInParameter(dbCmd, "ATTNDATE", DbType.DateTime, oCTATTN.ATTNDATE);
                 Db.AddInParameter(dbCmd, "ATTNOBSE", DbType.String, oCTATTN.ATTNOBSE);
                 return Db.ExecuteNonQuery(dbCmd) > 0;
@@ -47,6 +48,20 @@ namespace ControlBS.DataObjects
                 foreach (DataRow dataRow in dt.Rows)
                 {
                     list.Add(Util.ToObject<CTATTN>(dataRow));
+                }
+            }
+            return list;
+        }
+        public virtual List<CTATTNFilterResponse> FilterList(CTATTNFilterRequest oCTATTNFilterRequest){
+            List<CTATTNFilterResponse> list = new List<CTATTNFilterResponse>();
+            using (IDataReader dr = Db.ExecuteReader("dbo.spu_CTATTN_FilterList",oCTATTNFilterRequest.PERSIDEN, oCTATTNFilterRequest.ATTNDTIN, oCTATTNFilterRequest.ATTNDTFN))
+            {
+                DataTable dt = new DataTable();
+                dt.Load(dr);
+
+                foreach (DataRow dataRow in dt.Rows)
+                {
+                    list.Add(Util.ToObject<CTATTNFilterResponse>(dataRow));
                 }
             }
             return list;

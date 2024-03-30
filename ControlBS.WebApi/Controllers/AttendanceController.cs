@@ -3,6 +3,7 @@ using ControlBS.BusinessObjects;
 using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
 using Serilog;
+using ControlBS.BusinessObjects.Models;
 
 namespace ControlBS.WebApi.Controllers
 {
@@ -33,6 +34,23 @@ namespace ControlBS.WebApi.Controllers
             }
         }
 
+        [HttpPost("filterList")]
+        public IActionResult FilterList([FromBody] CTATTNFilterRequest oCTATTNFilterRequest)
+        {
+            try
+            {
+                Response<List<CTATTNFilterResponse>> oResponse = oCTATTNFacade.FilterList(oCTATTNFilterRequest);
+                return StatusCode(StatusCodes.Status200OK, oResponse);
+            }
+            catch (Exception e)
+            {
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                throw;
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] CTATTN oCTATTN)
         {
@@ -51,11 +69,11 @@ namespace ControlBS.WebApi.Controllers
             }
         }
         [HttpGet("{ATTNIDEN}")]
-        public IActionResult Get(int ATTIDEN)
+        public IActionResult Get(int ATTNIDEN)
         {
             try
             {
-                Response<CTATTN?> oResponse = oCTATTNFacade.Get(ATTIDEN);
+                Response<CTATTN?> oResponse = oCTATTNFacade.Get(ATTNIDEN);
                 oResponse.statusCode = oResponse.value != null ? StatusCodes.Status200OK : StatusCodes.Status404NotFound;
                 return StatusCode(oResponse.statusCode, oResponse);
             }

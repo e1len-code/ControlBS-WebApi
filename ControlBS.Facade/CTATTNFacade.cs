@@ -3,6 +3,7 @@ using ControlBS.BusinessObjects;
 using ControlBS.DataObjects;
 using FluentValidation;
 using FluentValidation.Results;
+using ControlBS.BusinessObjects.Models;
 namespace ControlBS.Facade
 {
     public partial class CTATTNFacade
@@ -65,6 +66,11 @@ namespace ControlBS.Facade
         {
             Response<List<CTATTN>> oResponse = new Response<List<CTATTN>>();
             oResponse.value = oCTATTNDao.List();
+            return oResponse;
+        }
+        public virtual Response<List<CTATTNFilterResponse>> FilterList(CTATTNFilterRequest oCTATTNFilterRequest){
+            Response<List<CTATTNFilterResponse>> oResponse = new Response<List<CTATTNFilterResponse>>();
+            oResponse.value = oCTATTNDao.FilterList(oCTATTNFilterRequest);
             return oResponse;
         }
 
