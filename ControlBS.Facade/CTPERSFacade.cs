@@ -74,8 +74,26 @@ namespace ControlBS.Facade
         }
         public virtual Response<CTPERS?> AuthLogin (AuthRequest oAuthRequest){
             Response<CTPERS?> oResponse = new Response<CTPERS?>();
+            if (oAuthRequest.userName == null || oAuthRequest.userName.Trim() == ""){
+                oResponse.errors.Add(new ErrorResponse{message = "El usuario no puede ser vacío o nulo", source = "Auth - Facade", stackTrace = ""});
+                oResponse.statusCode = HttpStatusCode.BadRequest;
+                return oResponse;
+            }
+            if (oAuthRequest.password == null || oAuthRequest.password.Trim() == "") {
+                oResponse.errors.Add(new ErrorResponse{message = "La contraseña no puede ser vacío o nulo", source = " Auth - Facade", stackTrace = ""});
+                oResponse.statusCode = HttpStatusCode.BadRequest;
+                return oResponse;
+            }
+            
             CTPERS? oCTPERS = oCTPERSDao.Auth(oAuthRequest);
-            oResponse.value = oCTPERS;
+            if (oCTPERS != null){
+                oResponse.value = oCTPERS;
+            }
+            else{
+                oResponse.errors.Add(new ErrorResponse{message = "El usuario y/o contraseña son incorrectos", source = " Auth - Facade", stackTrace = ""});
+                oResponse.statusCode = HttpStatusCode.NotFound;
+            }
+            
             return oResponse;
         }
     }
