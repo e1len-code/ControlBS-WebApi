@@ -25,11 +25,11 @@ namespace ControlBS.DataObjects
         {
             return Db.ExecuteNonQuery("dbo.spu_CTATTN_delete", ATTNIDEN) == 1;
         }
-        public virtual CTATTN Get(int ATTNIDEN)
+        public virtual CTATTN? Get(int ATTNIDEN)
         {
-            CTATTN gotCTATTN = new CTATTN();
+            CTATTN? gotCTATTN = new CTATTN();
             DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTATTN_get", ATTNIDEN).Tables[0];
-            gotCTATTN = dtDatos.Rows.Count > 0 ? Util.ToObject<CTATTN>(dtDatos.Rows[0]) : gotCTATTN;
+            gotCTATTN = dtDatos.Rows.Count > 0 ? Util.ToObject<CTATTN>(dtDatos.Rows[0]) : null;
             return gotCTATTN;
         }
         public virtual bool Exist(int ATTNIDEN)

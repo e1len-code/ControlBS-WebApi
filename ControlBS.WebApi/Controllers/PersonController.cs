@@ -3,11 +3,14 @@ using ControlBS.BusinessObjects;
 using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
 using Serilog;
+using ControlBS.WebApi.Utils.Auth;
 
 namespace ControlBS.WebApi.Controllers
 {
+    [ApiController]
+    [Authorize]
     [Route("[controller]")]
-    public class PersonController : Controller
+    public class PersonController : ControllerBase
     {
         private CTPERSFacade oCTPERSFacade;
         private Response<ErrorResponse> errorResponse;

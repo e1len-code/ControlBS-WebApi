@@ -19,5 +19,11 @@ namespace ControlBS.BusinessObjects.Response
             this.errors.Add(new ErrorResponse { message = e.Message, source = e.Source, stackTrace = e.StackTrace });
             statusCode = 500;
         }
+        public Response(int statusCode){
+            if (statusCode == 401){//Unauthorized
+                this.errors.Add(new ErrorResponse{message = "La peticion no esta autorizada", source = "Controller - Authorize", stackTrace = ""});
+                this.statusCode = statusCode;
+            }
+        }
     }
 }

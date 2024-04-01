@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
 using Serilog;
 using FluentValidation;
+using ControlBS.WebApi.Utils.Auth;
 
 namespace ControlBS.WebApi.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class LogController : Controller
     {

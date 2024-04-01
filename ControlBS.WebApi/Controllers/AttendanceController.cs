@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
 using Serilog;
 using ControlBS.BusinessObjects.Models;
+using ControlBS.WebApi.Utils.Auth;
 
 namespace ControlBS.WebApi.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class AttendanceController : Controller
     {

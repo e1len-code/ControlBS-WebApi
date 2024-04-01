@@ -3,6 +3,7 @@ using ControlBS.BusinessObjects;
 using ControlBS.DataObjects;
 using FluentValidation;
 using FluentValidation.Results;
+using ControlBS.BusinessObjects.Auth;
 
 namespace ControlBS.Facade
 {
@@ -49,22 +50,28 @@ namespace ControlBS.Facade
             oResponse.value = oCTPERSDao.Delete(ATTIDEN);
             return oResponse;
         }
-        public virtual Response<CTPERS?> Get(int ATTIDEN)
+        public virtual Response<CTPERS?> Get(int? PERSIDEN)
         {
             Response<CTPERS?> oResponse = new Response<CTPERS?>();
-            oResponse.value = oCTPERSDao.Get(ATTIDEN);
+            oResponse.value =  PERSIDEN != null ? oCTPERSDao.Get((int)PERSIDEN) : null;
             return oResponse;
         }
-        public virtual Response<bool> Exist(int ATTIDEN)
+        public virtual Response<bool> Exist(int PERSIDEN)
         {
             Response<bool> oResponse = new Response<bool>();
-            oResponse.value = oCTPERSDao.Exist(ATTIDEN);
+            oResponse.value = oCTPERSDao.Exist(PERSIDEN);
             return oResponse;
         }
         public virtual Response<List<CTPERS>> List()
         {
             Response<List<CTPERS>> oResponse = new Response<List<CTPERS>>();
             oResponse.value = oCTPERSDao.List();
+            return oResponse;
+        }
+        public virtual Response<CTPERS?> AuthLogin (AuthRequest oAuthRequest){
+            Response<CTPERS?> oResponse = new Response<CTPERS?>();
+            CTPERS? oCTPERS = oCTPERSDao.Auth(oAuthRequest);
+            oResponse.value = oCTPERS;
             return oResponse;
         }
     }

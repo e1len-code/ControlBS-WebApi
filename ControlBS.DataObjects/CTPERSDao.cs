@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using ControlBS.BusinessObjects;
+using ControlBS.BusinessObjects.Auth;
 
 namespace ControlBS.DataObjects
 {
@@ -28,6 +29,13 @@ namespace ControlBS.DataObjects
         {
             CTPERS? gotCTPERS = new CTPERS();
             DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTPERS_get", PERSIDEN).Tables[0];
+            gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTPERS>(dtDatos.Rows[0]) : null;
+            return gotCTPERS;
+        }
+        public virtual CTPERS? Auth(AuthRequest oAuthRequest)
+        {
+            CTPERS? gotCTPERS = new CTPERS();
+            DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTPERS_Auth", oAuthRequest.userName, oAuthRequest.password).Tables[0];
             gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTPERS>(dtDatos.Rows[0]) : null;
             return gotCTPERS;
         }
