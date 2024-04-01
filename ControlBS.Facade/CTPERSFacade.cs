@@ -4,6 +4,8 @@ using ControlBS.DataObjects;
 using FluentValidation;
 using FluentValidation.Results;
 using ControlBS.BusinessObjects.Auth;
+using System.Net;
+using System.Reflection.Metadata;
 
 namespace ControlBS.Facade
 {
@@ -34,27 +36,29 @@ namespace ControlBS.Facade
                     oResponse.errors.Add(new ErrorResponse { message = failure.ErrorMessage, source = "Facade - Validaciones", stackTrace = "" });
                 }
                 existError = true;
+                oResponse.statusCode = HttpStatusCode.BadRequest;
                 return oResponse;
             }
             return new Response<bool> { value = oCTPERSDao.Save(oCTPERS) };
         }
-        public virtual Response<bool> Delete(int ATTIDEN)
+        public virtual Response<bool> Delete(int PERSIDEN)
         {
-            Response<bool> oResponse = new Response<bool>();
-            if (!oCTPERSDao.Exist(ATTIDEN))
+            if (!oCTPERSDao.Exist(PERSIDEN))
             {
-                oResponse.value = false;
-                oResponse.errors.Add(new ErrorResponse { message = "No se ha encontrado el elemento para eliminar", source = "Facade - Validaciones", stackTrace = "" });
-                return oResponse;
+                return new Response<bool>(HttpStatusCode.NotFound);
             }
-            oResponse.value = oCTPERSDao.Delete(ATTIDEN);
-            return oResponse;
+            return new Response<bool>{value = oCTPERSDao.Delete(PERSIDEN)};
         }
         public virtual Response<CTPERS?> Get(int? PERSIDEN)
         {
-            Response<CTPERS?> oResponse = new Response<CTPERS?>();
-            oResponse.value =  PERSIDEN != null ? oCTPERSDao.Get((int)PERSIDEN) : null;
-            return oResponse;
+            if (PERSIDEN == null){
+                return new Response<CTPERS?>(HttpStatusCode.NotFound);
+            }
+            CTPERS? oCTPERS =  oCTPERSDao.Get((int)PERSIDEN);
+            if (oCTPERS == null){
+                return new Response<CTPERS?>(HttpStatusCode.NotFound);
+            }
+            return new Response<CTPERS?>{value = oCTPERS};
         }
         public virtual Response<bool> Exist(int PERSIDEN)
         {

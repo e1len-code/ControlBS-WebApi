@@ -1,3 +1,4 @@
+using System.Net;
 using ControlBS.BusinessObjects;
 using ControlBS.BusinessObjects.Auth;
 using ControlBS.BusinessObjects.Response;
@@ -20,13 +21,14 @@ namespace ControlBS.WebApi.Controllers {
             errorResponse = new Response<ErrorResponse>();
             _jwtUtils = jwtUtils;
         }
+
         [HttpPost("/auth")]
         public IActionResult Login([FromBody] AuthRequest oAuthRequest){
             try{
                 Response<CTPERS?> oResponse = oCTPERSFacade.AuthLogin(oAuthRequest);
                 Response<AuthResponse> oResponseAuth = new Response<AuthResponse>();
                 if (oResponse.value == null){
-                    oResponse.statusCode = StatusCodes.Status404NotFound;
+                    oResponse.statusCode = HttpStatusCode.NotFound;
                     return StatusCode(StatusCodes.Status404NotFound, oResponse);
                 } 
                 var token = _jwtUtils.GenerateJwtToken(oResponse.value!);

@@ -1,3 +1,4 @@
+using System.Net;
 using ControlBS.BusinessObjects;
 using ControlBS.BusinessObjects.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace ControlBS.WebApi.Utils.Auth{
             var user = (Response<CTPERS>?)context.HttpContext.Items["User"];
             if (user == null){
                 // not logged in or role not authorized
-                context.Result = new JsonResult(new Response<CTPERS>(StatusCodes.Status401Unauthorized)){StatusCode = StatusCodes.Status401Unauthorized};
+                context.Result = new JsonResult(new Response<CTPERS>(HttpStatusCode.Unauthorized)){StatusCode = StatusCodes.Status401Unauthorized};
             }
         }
     }

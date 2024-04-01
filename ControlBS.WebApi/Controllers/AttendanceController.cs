@@ -60,8 +60,7 @@ namespace ControlBS.WebApi.Controllers
             try
             {
                 Response<bool> oResponse = await oCTATTNFacade.Save(oCTATTN);
-                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
-                return StatusCode(oResponse.statusCode, oResponse);
+                return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
@@ -71,14 +70,14 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
+
         [HttpGet("{ATTNIDEN}")]
         public IActionResult Get(int ATTNIDEN)
         {
             try
             {
                 Response<CTATTN?> oResponse = oCTATTNFacade.Get(ATTNIDEN);
-                oResponse.statusCode = oResponse.value != null ? StatusCodes.Status200OK : StatusCodes.Status404NotFound;
-                return StatusCode(oResponse.statusCode, oResponse);
+                return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
@@ -88,14 +87,14 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
+        
         [HttpDelete("{ATTNIDEN}")]
         public IActionResult Delete(int ATTNIDEN)
         {
             try
             {
                 Response<bool> oResponse = oCTATTNFacade.Delete(ATTNIDEN);
-                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
-                return StatusCode(oResponse.statusCode, oResponse);
+                return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {

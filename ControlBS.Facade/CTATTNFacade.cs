@@ -4,6 +4,7 @@ using ControlBS.DataObjects;
 using FluentValidation;
 using FluentValidation.Results;
 using ControlBS.BusinessObjects.Models;
+using System.Net;
 namespace ControlBS.Facade
 {
     public partial class CTATTNFacade
@@ -19,7 +20,6 @@ namespace ControlBS.Facade
             oCTATTNDao = new CTATTNDao();
         }
         public virtual string GetError() => error;
-
         public virtual bool ExistError() => existError;
 
         public virtual async Task<Response<bool>> Save(CTATTN oCTATTN)
@@ -32,7 +32,7 @@ namespace ControlBS.Facade
                 {
                     oResponse.errors.Add(new ErrorResponse { message = failure.ErrorMessage, source = "Facade - Validaciones", stackTrace = "" });
                 }
-
+                oResponse.statusCode = HttpStatusCode.BadRequest;
                 existError = true;
                 return oResponse;
             }
@@ -40,21 +40,19 @@ namespace ControlBS.Facade
         }
         public virtual Response<bool> Delete(int ATTIDEN)
         {
-            Response<bool> oResponse = new Response<bool>();
             if (!oCTATTNDao.Exist(ATTIDEN))
             {
-                oResponse.value = false;
-                oResponse.errors.Add(new ErrorResponse { message = "No se ha encontrado el elemento para eliminar", source = "Facade - Validaciones", stackTrace = "" });
-                return oResponse;
+                return new Response<bool>(HttpStatusCode.NotFound);
             }
-            oResponse.value = oCTATTNDao.Delete(ATTIDEN);
-            return oResponse;
+            return new Response<bool>{value = oCTATTNDao.Delete(ATTIDEN)};
         }
         public virtual Response<CTATTN?> Get(int ATTIDEN)
         {
-            Response<CTATTN?> oResponse = new Response<CTATTN?>();
-            oResponse.value = oCTATTNDao.Get(ATTIDEN);
-            return oResponse;
+            CTATTN? valueGet = oCTATTNDao.Get(ATTIDEN);
+            if (valueGet == null){
+                return new Response<CTATTN?>(HttpStatusCode.NotFound);
+            }
+            return new Response<CTATTN?>{value = valueGet};
         }
         public virtual Response<bool> Exist(int ATTIDEN)
         {

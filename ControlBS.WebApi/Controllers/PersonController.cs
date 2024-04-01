@@ -26,7 +26,7 @@ namespace ControlBS.WebApi.Controllers
             try
             {
                 Response<List<CTPERS>> oResponse = oCTPERSFacade.List();
-                return StatusCode(oResponse.statusCode, oResponse);
+                return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
@@ -43,8 +43,7 @@ namespace ControlBS.WebApi.Controllers
             try
             {
                 Response<bool> oResponse = await oCTPERSFacade.Save(oCTPERS);
-                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
-                return StatusCode(oResponse.statusCode, oResponse);
+                return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
@@ -54,14 +53,14 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
+        
         [HttpGet("{PERSIDEN}")]
         public IActionResult Get(int PERSIDEN)
         {
             try
             {
                 Response<CTPERS?> oResponse = oCTPERSFacade.Get(PERSIDEN);
-                oResponse.statusCode = oResponse.value != null ? StatusCodes.Status200OK : StatusCodes.Status404NotFound;
-                return StatusCode(oResponse.statusCode, oResponse);
+                return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
@@ -71,14 +70,14 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
+
         [HttpDelete("{PERSIDEN}")]
         public IActionResult Delete(int PERSIDEN)
         {
             try
             {
                 Response<bool> oResponse = oCTPERSFacade.Delete(PERSIDEN);
-                oResponse.statusCode = oResponse.success ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest;
-                return StatusCode(oResponse.statusCode, oResponse);
+                return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)
             {
