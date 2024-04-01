@@ -8,9 +8,10 @@ using ControlBS.WebApi.Utils.Auth;
 
 namespace ControlBS.WebApi.Controllers
 {
+    [ApiController]
     [Authorize]
     [Route("[controller]")]
-    public class AttendanceController : Controller
+    public class AttendanceController : ControllerBase
     {
         private Response<ErrorResponse> errorResponse;
         private CTATTNFacade oCTATTNFacade;

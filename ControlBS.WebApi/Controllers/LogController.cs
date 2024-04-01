@@ -7,9 +7,10 @@ using ControlBS.WebApi.Utils.Auth;
 
 namespace ControlBS.WebApi.Controllers
 {
+    [ApiController]
     [Authorize]
     [Route("[controller]")]
-    public class LogController : Controller
+    public class LogController : ControllerBase
     {
         private IHostEnvironment Environment;
         private ErrorResponse? error;

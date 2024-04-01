@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
 namespace ControlBS.WebApi.Controllers {
+    
+    [ApiController]
     [Route("[controller]")]
-    public class AuthController : Controller{
+    public class AuthController : ControllerBase
+    {
         private Response<ErrorResponse> errorResponse;
         private CTPERSFacade oCTPERSFacade;
         private readonly IJwtUtils _jwtUtils;
@@ -25,7 +28,6 @@ namespace ControlBS.WebApi.Controllers {
                 if (oResponse.value == null){
                     oResponse.statusCode = StatusCodes.Status404NotFound;
                     return StatusCode(StatusCodes.Status404NotFound, oResponse);
-
                 } 
                 var token = _jwtUtils.GenerateJwtToken(oResponse.value!);
                 oResponseAuth.value = new AuthResponse(oResponse.value, token);
