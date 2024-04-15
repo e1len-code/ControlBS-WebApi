@@ -40,7 +40,7 @@ namespace ControlBS.WebApi.Controllers
                     Log.Error(error.ToString());
                     return StatusCode(StatusCodes.Status404NotFound, errorResponse);
                 }
-                var fileStream = new FileStream(_logFilePath, FileMode.Open, FileAccess.Read);
+                var fileStream = new FileStream(_logFilePath, FileMode.Open, FileAccess.Read,FileShare.Read);
                 return File(fileStream, "text/plain", Path.GetFileName(_logFilePath));
             }
             catch (Exception e)
