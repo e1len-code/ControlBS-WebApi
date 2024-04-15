@@ -18,6 +18,7 @@ namespace ControlBS.DataObjects
                 Db.AddInParameter(dbCmd, "ATTNUBIC", DbType.String, oCTATTN.ATTNUBIC);
                 Db.AddInParameter(dbCmd, "ATTNDATE", DbType.DateTime, oCTATTN.ATTNDATE);
                 Db.AddInParameter(dbCmd, "ATTNOBSE", DbType.String, oCTATTN.ATTNOBSE);
+                Db.AddInParameter(dbCmd, "ATTNLINE", DbType.Int32, oCTATTN.ATTNLINE);
                 return Db.ExecuteNonQuery(dbCmd) > 0;
             }
         }
@@ -52,9 +53,10 @@ namespace ControlBS.DataObjects
             }
             return list;
         }
-        public virtual List<CTATTNFilterResponse> FilterList(CTATTNFilterRequest oCTATTNFilterRequest){
+        public virtual List<CTATTNFilterResponse> FilterList(CTATTNFilterRequest oCTATTNFilterRequest)
+        {
             List<CTATTNFilterResponse> list = new List<CTATTNFilterResponse>();
-            using (IDataReader dr = Db.ExecuteReader("dbo.spu_CTATTN_FilterList",oCTATTNFilterRequest.PERSIDEN, oCTATTNFilterRequest.ATTNDTIN, oCTATTNFilterRequest.ATTNDTFN))
+            using (IDataReader dr = Db.ExecuteReader("dbo.spu_CTATTN_FilterList", oCTATTNFilterRequest.PERSIDEN, oCTATTNFilterRequest.ATTNDTIN, oCTATTNFilterRequest.ATTNDTFN))
             {
                 DataTable dt = new DataTable();
                 dt.Load(dr);
