@@ -1,5 +1,4 @@
 
-using System.Data;
 using FluentValidation;
 
 namespace ControlBS.BusinessObjects
@@ -21,7 +20,6 @@ namespace ControlBS.BusinessObjects
             RuleFor(x => x.ATTNIDEN).NotNull();
             RuleFor(x => x.PERSIDEN).NotNull();
             RuleFor(x => x.ATTNDATE).NotNull();
-            RuleFor(x => x.ATTNOBSE).NotNull();
             RuleFor(x => x.ATTNLINE).NotNull();
         }
     }

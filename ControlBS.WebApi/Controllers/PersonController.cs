@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ControlBS.Facade;
 using Serilog;
 using ControlBS.WebApi.Utils.Auth;
+using ControlBS.BusinessObjects.Models;
 
 namespace ControlBS.WebApi.Controllers
 {
@@ -38,7 +39,7 @@ namespace ControlBS.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save([FromBody] CTPERS oCTPERS)
+        public async Task<IActionResult> Save([FromBody] CTPERSSaveRequest oCTPERS)
         {
             try
             {
@@ -53,13 +54,29 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
-        
+
         [HttpGet("{PERSIDEN}")]
         public IActionResult Get(int PERSIDEN)
         {
             try
             {
                 Response<CTPERS?> oResponse = oCTPERSFacade.Get(PERSIDEN);
+                return StatusCode((int)oResponse.statusCode, oResponse);
+            }
+            catch (Exception e)
+            {
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                throw;
+            }
+        }
+        [HttpGet("getPhoto/{PERSIDEN}")]
+        public IActionResult GetPhoto(int PERSIDEN)
+        {
+            try
+            {
+                Response<String?> oResponse = oCTPERSFacade.GetPhoto(PERSIDEN);
                 return StatusCode((int)oResponse.statusCode, oResponse);
             }
             catch (Exception e)

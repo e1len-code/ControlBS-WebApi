@@ -5,14 +5,14 @@ using FluentValidation;
 using FluentValidation.Results;
 using ControlBS.BusinessObjects.Auth;
 using System.Net;
-using System.Reflection.Metadata;
+using ControlBS.BusinessObjects.Models;
 
 namespace ControlBS.Facade
 {
     public partial class CTPERSFacade
     {
         private readonly CTPERSDao oCTPERSDao;
-        private IValidator<CTPERS> _validator;
+        private IValidator<CTPERSSaveRequest> _validator;
         private string error = "";
         private bool existError;
 
@@ -25,7 +25,7 @@ namespace ControlBS.Facade
 
         public virtual bool ExistError() => existError;
 
-        public virtual async Task<Response<bool>> Save(CTPERS oCTPERS)
+        public virtual async Task<Response<bool>> Save(CTPERSSaveRequest oCTPERS)
         {
             Response<bool> oResponse = new Response<bool>();
             ValidationResult result = await _validator.ValidateAsync(oCTPERS);
@@ -39,6 +39,19 @@ namespace ControlBS.Facade
                 oResponse.statusCode = HttpStatusCode.BadRequest;
                 return oResponse;
             }
+            if (oCTPERS.PERSIMAG != null)
+            {
+                String dirPath = $"{Directory.GetCurrentDirectory()}/imgs/";
+                String imgName = $"{oCTPERS.PERSIMAG.FILENAME}_{DateTime.Now.ToString("yyyy-MM-dd")}.{oCTPERS.PERSIMAG.FILETYPE}";
+
+                if (oCTPERS.PERSIMAG.FILEBASE == null)
+                {
+                    return new Response<bool>(HttpStatusCode.NotFound);
+                }
+                byte[] imgByteArray = Convert.FromBase64String(oCTPERS.PERSIMAG.FILEBASE);
+                File.WriteAllBytes(dirPath + imgName, imgByteArray);
+                oCTPERS.PERSPHTO = imgName;
+            }
             return new Response<bool> { value = oCTPERSDao.Save(oCTPERS) };
         }
         public virtual Response<bool> Delete(int PERSIDEN)
@@ -47,18 +60,20 @@ namespace ControlBS.Facade
             {
                 return new Response<bool>(HttpStatusCode.NotFound);
             }
-            return new Response<bool>{value = oCTPERSDao.Delete(PERSIDEN)};
+            return new Response<bool> { value = oCTPERSDao.Delete(PERSIDEN) };
         }
         public virtual Response<CTPERS?> Get(int? PERSIDEN)
         {
-            if (PERSIDEN == null){
+            if (PERSIDEN == null)
+            {
                 return new Response<CTPERS?>(HttpStatusCode.NotFound);
             }
-            CTPERS? oCTPERS =  oCTPERSDao.Get((int)PERSIDEN);
-            if (oCTPERS == null){
+            CTPERS? oCTPERS = oCTPERSDao.Get((int)PERSIDEN);
+            if (oCTPERS == null)
+            {
                 return new Response<CTPERS?>(HttpStatusCode.NotFound);
             }
-            return new Response<CTPERS?>{value = oCTPERS};
+            return new Response<CTPERS?> { value = oCTPERS };
         }
         public virtual Response<bool> Exist(int PERSIDEN)
         {
@@ -72,29 +87,55 @@ namespace ControlBS.Facade
             oResponse.value = oCTPERSDao.List();
             return oResponse;
         }
-        public virtual Response<CTPERS?> AuthLogin (AuthRequest oAuthRequest){
+        public virtual Response<CTPERS?> AuthLogin(AuthRequest oAuthRequest)
+        {
             Response<CTPERS?> oResponse = new Response<CTPERS?>();
-            if (oAuthRequest.userName == null || oAuthRequest.userName.Trim() == ""){
-                oResponse.errors.Add(new ErrorResponse{message = "El usuario no puede ser vacío o nulo", source = "Auth - Facade", stackTrace = ""});
+            if (oAuthRequest.userName == null || oAuthRequest.userName.Trim() == "")
+            {
+                oResponse.errors.Add(new ErrorResponse { message = "El usuario no puede ser vacío o nulo", source = "Auth - Facade", stackTrace = "" });
                 oResponse.statusCode = HttpStatusCode.BadRequest;
                 return oResponse;
             }
-            if (oAuthRequest.password == null || oAuthRequest.password.Trim() == "") {
-                oResponse.errors.Add(new ErrorResponse{message = "La contraseña no puede ser vacío o nulo", source = " Auth - Facade", stackTrace = ""});
+            if (oAuthRequest.password == null || oAuthRequest.password.Trim() == "")
+            {
+                oResponse.errors.Add(new ErrorResponse { message = "La contraseña no puede ser vacío o nulo", source = " Auth - Facade", stackTrace = "" });
                 oResponse.statusCode = HttpStatusCode.BadRequest;
                 return oResponse;
             }
-            
+
             CTPERS? oCTPERS = oCTPERSDao.Auth(oAuthRequest);
-            if (oCTPERS != null){
+            if (oCTPERS != null)
+            {
                 oResponse.value = oCTPERS;
             }
-            else{
-                oResponse.errors.Add(new ErrorResponse{message = "El usuario y/o contraseña son incorrectos", source = " Auth - Facade", stackTrace = ""});
+            else
+            {
+                oResponse.errors.Add(new ErrorResponse { message = "El usuario y/o contraseña son incorrectos", source = " Auth - Facade", stackTrace = "" });
                 oResponse.statusCode = HttpStatusCode.NotFound;
             }
-            
+
+            return oResponse;
+        }
+        public virtual Response<String?> GetPhoto(int PERSIDEN)
+        {
+            CTPERS? oPERS = oCTPERSDao.Get(PERSIDEN);
+            if (oPERS is null || oPERS.PERSIDEN == 0)
+            {
+                return new Response<String?>(HttpStatusCode.NotFound);
+            }
+            String dirPath = $"{Directory.GetCurrentDirectory()}/imgs/";
+            byte[] bytes = File.ReadAllBytes(dirPath + oPERS.PERSPHTO);
+
+            if (bytes.Length <= 0)
+            {
+                return new Response<String?>(HttpStatusCode.NotFound);
+
+            }
+            string file = Convert.ToBase64String(bytes);
+            Response<String?> oResponse = new Response<String?>();
+            oResponse.value = file;
             return oResponse;
         }
     }
+
 }

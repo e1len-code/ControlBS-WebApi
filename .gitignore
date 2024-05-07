@@ -480,3 +480,5 @@ $RECYCLE.BIN/
 Logs/
 #Script SQL
 SPU_SQL
+#imgs
+imgs/

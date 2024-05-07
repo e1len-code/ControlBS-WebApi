@@ -10,6 +10,7 @@ namespace ControlBS.BusinessObjects
         public string? PERSNMUS { get; set; }
         public string? PERSPASS { get; set; }
         public int PERSSTAT { get; set; }
+        public string? PERSPHTO { get; set; }
     }
     public class CTPERSValidator : AbstractValidator<CTPERS>
     {

@@ -18,6 +18,7 @@ namespace ControlBS.DataObjects
                 Db.AddInParameter(dbCmd, "PERSNMUS", DbType.String, oCTPERS.PERSNMUS);
                 Db.AddInParameter(dbCmd, "PERSPASS", DbType.String, oCTPERS.PERSPASS);
                 Db.AddInParameter(dbCmd, "PERSSTAT", DbType.Int32, oCTPERS.PERSSTAT);
+                Db.AddInParameter(dbCmd, "PERSPHTO", DbType.String, oCTPERS.PERSPHTO);
                 return Db.ExecuteNonQuery(dbCmd) > 0;
             }
         }
