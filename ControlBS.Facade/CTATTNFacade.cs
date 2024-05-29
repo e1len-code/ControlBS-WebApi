@@ -44,15 +44,16 @@ namespace ControlBS.Facade
             {
                 return new Response<bool>(HttpStatusCode.NotFound);
             }
-            return new Response<bool>{value = oCTATTNDao.Delete(ATTIDEN)};
+            return new Response<bool> { value = oCTATTNDao.Delete(ATTIDEN) };
         }
         public virtual Response<CTATTN?> Get(int ATTIDEN)
         {
             CTATTN? valueGet = oCTATTNDao.Get(ATTIDEN);
-            if (valueGet == null){
+            if (valueGet == null)
+            {
                 return new Response<CTATTN?>(HttpStatusCode.NotFound);
             }
-            return new Response<CTATTN?>{value = valueGet};
+            return new Response<CTATTN?> { value = valueGet };
         }
         public virtual Response<bool> Exist(int ATTIDEN)
         {
@@ -66,10 +67,51 @@ namespace ControlBS.Facade
             oResponse.value = oCTATTNDao.List();
             return oResponse;
         }
-        public virtual Response<List<CTATTNFilterResponse>> FilterList(CTATTNFilterRequest oCTATTNFilterRequest){
+        public virtual Response<List<CTATTNFilterResponse>> FilterList(CTATTNFilterRequest oCTATTNFilterRequest)
+        {
             Response<List<CTATTNFilterResponse>> oResponse = new Response<List<CTATTNFilterResponse>>();
             oResponse.value = oCTATTNDao.FilterList(oCTATTNFilterRequest);
             return oResponse;
+        }
+        public virtual Response<List<CTATTNResponseReport>> Report(CTATTNFilterRequest oCTATTNFilterRequest)
+        {
+            List<CTATTNResponseReport> listReport = new List<CTATTNResponseReport>();
+            List<CTATTNFilterResponse> listFilter = oCTATTNDao.FilterList(oCTATTNFilterRequest);
+            foreach (CTATTNFilterResponse oFilter in listFilter)
+            {
+                CTATTNResponseReport? itemReport = listReport.Find(x => DateOnly.FromDateTime(oFilter.ATTNDATE) == x.FECHA);
+                if (itemReport == null)
+                {
+                    itemReport = new CTATTNResponseReport()
+                    {
+                        NOMBRES_Y_APELLIDOS = oFilter.PERSNAME,
+                        OBSERVACION = oFilter.ATTNOBSE,
+                        FECHA = DateOnly.FromDateTime(oFilter.ATTNDATE)
+                    };
+                }
+                else
+                {
+                    listReport.Remove(itemReport);
+                }
+                switch (oFilter.ATTNLINE)
+                {
+                    case 1:
+                        itemReport.HORA_INGRESO = TimeOnly.FromDateTime(oFilter.ATTNDATE);
+                        break;
+                    case 2:
+                        itemReport.HORA_ALMUERZO = TimeOnly.FromDateTime(oFilter.ATTNDATE);
+                        break;
+                    case 3:
+                        itemReport.HORA_ALMUERZO_FINAL = TimeOnly.FromDateTime(oFilter.ATTNDATE);
+                        break;
+                    case 4:
+                        itemReport.HORA_SALIDA = TimeOnly.FromDateTime(oFilter.ATTNDATE);
+                        break;
+                }
+                listReport.Add(itemReport);
+            }
+
+            return new Response<List<CTATTNResponseReport>> { value = listReport };
         }
 
     }
