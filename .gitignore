@@ -482,3 +482,7 @@ Logs/
 SPU_SQL
 #imgs
 imgs/
+#signatures
+signatures/
+#reports
+reports/
