@@ -44,11 +44,11 @@ namespace ControlBS.Facade
                 String dirPath = $"{Directory.GetCurrentDirectory()}/imgs/";
                 String imgName = $"{oCTPERS.PERSIMAG.FILENAME}_{DateTime.Now.ToString("yyyy-MM-dd")}.{oCTPERS.PERSIMAG.FILETYPE}";
 
-                if (oCTPERS.PERSIMAG.FILEBASE == null)
+                if (oCTPERS.PERSIMAG.FILEBA64 == null)
                 {
                     return new Response<bool>(HttpStatusCode.NotFound);
                 }
-                byte[] imgByteArray = Convert.FromBase64String(oCTPERS.PERSIMAG.FILEBASE);
+                byte[] imgByteArray = Convert.FromBase64String(oCTPERS.PERSIMAG.FILEBA64);
                 File.WriteAllBytes(dirPath + imgName, imgByteArray);
                 oCTPERS.PERSPHTO = imgName;
             }
