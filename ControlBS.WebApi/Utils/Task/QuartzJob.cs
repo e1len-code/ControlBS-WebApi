@@ -52,6 +52,7 @@ namespace QuartzJob
 
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
+                Log.Information(jsonResponse);
                 Console.WriteLine($"{jsonResponse}\n");
             }
             catch (System.Exception e)

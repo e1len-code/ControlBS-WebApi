@@ -28,7 +28,7 @@ builder.Services.AddQuartz(q =>
     var jobKey = new JobKey("sendNotificationJob");
     q.AddJob<SendNotificationJob>(opts => opts.WithIdentity(jobKey));
 
-    q.AddTrigger(opts => opts.ForJob(jobKey).WithIdentity("sendNotificationJob-trigger").WithCronSchedule("0 0 9,13,14,18 ? * MON-FRI *"));
+    q.AddTrigger(opts => opts.ForJob(jobKey).WithIdentity("sendNotificationJob-trigger").WithCronSchedule("0 1 9,13,14,18 ? * MON-FRI"));
     //q.AddTrigger(opts => opts.ForJob(jobKey).WithIdentity("sendNotificationJob-trigger").WithCronSchedule("0 17 17 ? * MON-FRI"));
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
