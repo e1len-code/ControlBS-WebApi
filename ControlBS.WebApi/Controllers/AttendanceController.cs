@@ -5,6 +5,7 @@ using ControlBS.Facade;
 using Serilog;
 using ControlBS.BusinessObjects.Models;
 using ControlBS.WebApi.Utils.Auth;
+using ControlBS.WebApi.Utils;
 
 namespace ControlBS.WebApi.Controllers
 {
@@ -53,6 +54,22 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
+        [HttpPost("report")]
+        public IActionResult Report([FromBody] CTATTNFilterRequest oCTATTNFilterRequest)
+        {
+            try
+            {
+                Response<List<CTATTNResponseReport>> oResponse = oCTATTNFacade.Report(oCTATTNFilterRequest);
+                return StatusCode(StatusCodes.Status200OK, new Response<String> { value = ConvertXlsx.ConvertListToExcel(oResponse.value!, oCTATTNFilterRequest.PERSIDEN, "Reporte de Asistencias") });
+            }
+            catch (Exception e)
+            {
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                throw;
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] CTATTN oCTATTN)
@@ -87,7 +104,7 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
-        
+
         [HttpDelete("{ATTNIDEN}")]
         public IActionResult Delete(int ATTNIDEN)
         {
