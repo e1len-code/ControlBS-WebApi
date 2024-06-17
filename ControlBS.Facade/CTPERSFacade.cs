@@ -12,6 +12,7 @@ namespace ControlBS.Facade
     public partial class CTPERSFacade
     {
         private readonly CTPERSDao oCTPERSDao;
+        private readonly CTFILEFacade oCTFILEFacade;
         private IValidator<CTPERSSaveRequest> _validator;
         private string error = "";
         private bool existError;
@@ -19,6 +20,7 @@ namespace ControlBS.Facade
         public CTPERSFacade()
         {
             _validator = new CTPERSValidator();
+            oCTFILEFacade = new CTFILEFacade();
             oCTPERSDao = new CTPERSDao();
         }
         public virtual string GetError() => error;
@@ -114,26 +116,6 @@ namespace ControlBS.Facade
                 oResponse.statusCode = HttpStatusCode.NotFound;
             }
 
-            return oResponse;
-        }
-        public virtual Response<String?> GetPhoto(int PERSIDEN)
-        {
-            CTPERS? oPERS = oCTPERSDao.Get(PERSIDEN);
-            if (oPERS is null || oPERS.PERSIDEN == 0)
-            {
-                return new Response<String?>(HttpStatusCode.NotFound);
-            }
-            String dirPath = $"{Directory.GetCurrentDirectory()}/imgs/";
-            byte[] bytes = File.ReadAllBytes(dirPath + oPERS.PERSPHTO);
-
-            if (bytes.Length <= 0)
-            {
-                return new Response<String?>(HttpStatusCode.NotFound);
-
-            }
-            string file = Convert.ToBase64String(bytes);
-            Response<String?> oResponse = new Response<String?>();
-            oResponse.value = file;
             return oResponse;
         }
     }

@@ -71,23 +71,6 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
-        [HttpGet("getPhoto/{PERSIDEN}")]
-        public IActionResult GetPhoto(int PERSIDEN)
-        {
-            try
-            {
-                Response<String?> oResponse = oCTPERSFacade.GetPhoto(PERSIDEN);
-                return StatusCode((int)oResponse.statusCode, oResponse);
-            }
-            catch (Exception e)
-            {
-                errorResponse = new Response<ErrorResponse>(e);
-                Log.Error(errorResponse.errors.First().ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
-                throw;
-            }
-        }
-
         [HttpDelete("{PERSIDEN}")]
         public IActionResult Delete(int PERSIDEN)
         {
