@@ -25,10 +25,13 @@ builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 //Quartz => To implements Schedulers Jobs. 
 builder.Services.AddQuartz(q =>
 {
-    var jobKey = new JobKey("sendNotificationJob");
-    q.AddJob<SendNotificationJob>(opts => opts.WithIdentity(jobKey));
+    var jobKey1 = new JobKey("sendNotificationJob1");
+    q.AddJob<SendNotificationJob>(opts => opts.WithIdentity(jobKey1));
+    q.AddTrigger(opts => opts.ForJob(jobKey1).WithIdentity("sendNotificationJob1-trigger").WithCronSchedule("0 1 9,13 ? * MON-FRI"));
 
-    q.AddTrigger(opts => opts.ForJob(jobKey).WithIdentity("sendNotificationJob-trigger").WithCronSchedule("0 1 9,13,14,18 ? * MON-FRI"));
+    var jobKey2 = new JobKey("sendNotificationJob2");
+    q.AddJob<SendNotificationJob>(opts => opts.WithIdentity(jobKey2));
+    q.AddTrigger(opts => opts.ForJob(jobKey2).WithIdentity("sendNotificationJob2-trigger").WithCronSchedule("0 1 14,18 ? * MON-FRI"));
     //q.AddTrigger(opts => opts.ForJob(jobKey).WithIdentity("sendNotificationJob-trigger").WithCronSchedule("0 17 17 ? * MON-FRI"));
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
