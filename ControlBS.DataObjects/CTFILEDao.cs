@@ -24,13 +24,13 @@ namespace ControlBS.DataObjects
         // {
         //     return Db.ExecuteNonQuery("dbo.spu_CTPERS_delete", PERSIDEN) == 1;
         // }
-        // public virtual CTPERS? Get(int PERSIDEN)
-        // {
-        //     CTPERS? gotCTPERS = new CTPERS();
-        //     DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTPERS_get", PERSIDEN).Tables[0];
-        //     gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTPERS>(dtDatos.Rows[0]) : null;
-        //     return gotCTPERS;
-        // }
+        public virtual CTFILE? GetFile(String filePath)
+        {
+            CTFILE? gotCTPERS = new CTFILE();
+            DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTFILE_get", filePath).Tables[0];
+            gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTFILE>(dtDatos.Rows[0]) : null;
+            return gotCTPERS;
+        }
         // public virtual CTPERS? Auth(AuthRequest oAuthRequest)
         // {
         //     CTPERS? gotCTPERS = new CTPERS();
@@ -38,11 +38,11 @@ namespace ControlBS.DataObjects
         //     gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTPERS>(dtDatos.Rows[0]) : null;
         //     return gotCTPERS;
         // }
-        // public virtual bool Exist(int PERSIDEN)
-        // {
-        //     DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTPERS_get", PERSIDEN).Tables[0];
-        //     return dtDatos.Rows.Count > 0;
-        // }
+        public virtual bool Exist(String filePath)
+        {
+            DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTFILE_get", filePath).Tables[0];
+            return dtDatos.Rows.Count > 0;
+        }
         // public virtual List<CTPERS> List()
         // {
         //     List<CTPERS> list = new List<CTPERS>();

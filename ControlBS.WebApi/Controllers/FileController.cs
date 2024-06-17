@@ -71,22 +71,24 @@ namespace ControlBS.WebApi.Controllers
         //         throw;
         //     }
         // }
-        // [HttpGet("getPhoto/{FILEIDEN}")]
-        // public IActionResult GetPhoto(int FILEIDEN)
-        // {
-        //     try
-        //     {
-        //         Response<String?> oResponse = oCTFILEFacade.GetPhoto(FILEIDEN);
-        //         return StatusCode((int)oResponse.statusCode, oResponse);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         errorResponse = new Response<ErrorResponse>(e);
-        //         Log.Error(errorResponse.errors.First().ToString());
-        //         return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
-        //         throw;
-        //     }
-        // }
+        [HttpGet("getPhoto/{fileDirectory}/{fileName}")]
+        public IActionResult GetPhoto(String fileDirectory, String fileName)
+        {
+            try
+            {
+                Log.Information("GetPhoto");
+                Log.Information(Environment.CurrentDirectory + "/" + Path.Combine(fileDirectory, fileName));
+                Response<String?> oResponse = oCTFILEFacade.Get(fileDirectory + "/" + fileName);
+                return StatusCode((int)oResponse.statusCode, oResponse);
+            }
+            catch (Exception e)
+            {
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                throw;
+            }
+        }
 
         // [HttpDelete("{FILEIDEN}")]
         // public IActionResult Delete(int FILEIDEN)

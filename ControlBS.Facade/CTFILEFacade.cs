@@ -36,44 +36,27 @@ namespace ControlBS.Facade
                 existError = true;
                 return oResponse;
             }
-            string base64Image = oCTFILE.FILEBA64;
+            string base64Image = oCTFILE.FILEBA64!;
             byte[] imageBytes = Convert.FromBase64String(base64Image);
-            string directoryPath = Path.Combine(Environment.CurrentDirectory, "Signatures");
-            Directory.CreateDirectory(directoryPath); // Create the directory if it doesn't exist
-            string filePath = Path.Combine(directoryPath, oCTFILE.FILENAME + ".png");
+            string filePath = Path.Combine(Environment.CurrentDirectory, oCTFILE.FILEPATH!);
             File.WriteAllBytes(filePath, imageBytes);
 
             return new Response<bool> { value = oCTFILEDao.Save(oCTFILE) };
         }
-        //     public virtual Response<bool> Delete(int ATTIDEN)
-        //     {
-        //         if (!oCTFILEDao.Exist(ATTIDEN))
-        //         {
-        //             return new Response<bool>(HttpStatusCode.NotFound);
-        //         }
-        //         return new Response<bool> { value = oCTFILEDao.Delete(ATTIDEN) };
-        //     }
-        //     public virtual Response<CTFILE?> Get(int ATTIDEN)
-        //     {
-        //         CTFILE? valueGet = oCTFILEDao.Get(ATTIDEN);
-        //         if (valueGet == null)
-        //         {
-        //             return new Response<CTFILE?>(HttpStatusCode.NotFound);
-        //         }
-        //         return new Response<CTFILE?> { value = valueGet };
-        //     }
-        //     public virtual Response<bool> Exist(int ATTIDEN)
-        //     {
-        //         Response<bool> oResponse = new Response<bool>();
-        //         oResponse.value = oCTFILEDao.Exist(ATTIDEN);
-        //         return oResponse;
-        //     }
-        //     public virtual Response<List<CTFILE>> List()
-        //     {
-        //         Response<List<CTFILE>> oResponse = new Response<List<CTFILE>>();
-        //         oResponse.value = oCTFILEDao.List();
-        //         return oResponse;
-        //     }
-
+        public virtual Response<string?> Get(string filepath)
+        {
+            Response<String?> oResponse = new Response<String?>();
+            CTFILE? oCTFILE = oCTFILEDao.GetFile(filepath);
+            if (oCTFILE == null)
+            {
+                oResponse.statusCode = HttpStatusCode.NotFound;
+                return oResponse;
+            }
+            byte[] imageBytes = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, oCTFILE.FILEPATH!));
+            string base64Image = Convert.ToBase64String(imageBytes);
+            oCTFILE.FILEBA64 = base64Image;
+            oResponse.value = oCTFILE.FILEBA64;
+            return oResponse;
+        }
     }
 }
