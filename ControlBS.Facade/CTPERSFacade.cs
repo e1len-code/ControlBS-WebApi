@@ -42,19 +42,6 @@ namespace ControlBS.Facade
                 oResponse.statusCode = HttpStatusCode.BadRequest;
                 return oResponse;
             }
-            if (oCTPERS.PERSIMAG != null)
-            {
-                String dirPath = $"{Directory.GetCurrentDirectory()}/imgs/";
-                String imgName = $"{oCTPERS.PERSIMAG.FILENAME}_{DateTime.Now.ToString("yyyy-MM-dd")}.{oCTPERS.PERSIMAG.FILETYPE}";
-
-                if (oCTPERS.PERSIMAG.FILEBA64 == null)
-                {
-                    return new Response<bool>(HttpStatusCode.NotFound);
-                }
-                byte[] imgByteArray = Convert.FromBase64String(oCTPERS.PERSIMAG.FILEBA64);
-                File.WriteAllBytes(dirPath + imgName, imgByteArray);
-                oCTPERS.PERSPHTO = imgName;
-            }
             return new Response<bool> { value = oCTPERSDao.Save(oCTPERS) };
         }
         public virtual Response<bool> Delete(int PERSIDEN)
