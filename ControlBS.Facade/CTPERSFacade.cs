@@ -6,6 +6,7 @@ using FluentValidation.Results;
 using ControlBS.BusinessObjects.Auth;
 using System.Net;
 using ControlBS.BusinessObjects.Models;
+using ControlBS.BusinessObjects.Security;
 
 namespace ControlBS.Facade
 {
@@ -116,6 +117,24 @@ namespace ControlBS.Facade
                 oResponse.statusCode = HttpStatusCode.NotFound;
             }
 
+            return oResponse;
+        }
+        public virtual Response<bool> UpdatePassword(CTPEUP o)
+        {
+            Response<bool> oResponse = new Response<bool>();
+            if (o.PERSIDEN == 0)
+            {
+                oResponse.errors.Add(new ErrorResponse { message = "El identificador del usuario no puede ser 0", source = "UpdatePassword - Facade", stackTrace = "" });
+                oResponse.statusCode = HttpStatusCode.BadRequest;
+                return oResponse;
+            }
+            if (o.PERSPASS == null || o.PERSPASS.Trim() == "")
+            {
+                oResponse.errors.Add(new ErrorResponse { message = "La contraseña no puede ser vacía o nula", source = "UpdatePassword - Facade", stackTrace = "" });
+                oResponse.statusCode = HttpStatusCode.BadRequest;
+                return oResponse;
+            }
+            oResponse.value = oCTPERSDao.UpdatePassword(o);
             return oResponse;
         }
     }

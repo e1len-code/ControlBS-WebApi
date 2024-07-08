@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using ControlBS.BusinessObjects;
 using ControlBS.BusinessObjects.Auth;
+using ControlBS.BusinessObjects.Security;
 
 namespace ControlBS.DataObjects
 {
@@ -39,6 +40,15 @@ namespace ControlBS.DataObjects
             DataTable dtDatos = Db.ExecuteDataSet("dbo.spu_CTPERS_Auth", oAuthRequest.userName, oAuthRequest.password).Tables[0];
             gotCTPERS = dtDatos.Rows.Count > 0 ? Util.ToObject<CTPERS>(dtDatos.Rows[0]) : null;
             return gotCTPERS;
+        }
+        public virtual bool UpdatePassword(CTPEUP o)
+        {
+            using (DbCommand dbCmd = Db.GetStoredProcCommand("dbo.spu_CTPERS_UpdatePassword"))
+            {
+                Db.AddInParameter(dbCmd, "PERSIDEN", DbType.Int32, o.PERSIDEN);
+                Db.AddInParameter(dbCmd, "PERSPASS", DbType.String, o.PERSPASS);
+                return Db.ExecuteNonQuery(dbCmd) > 0;
+            }
         }
         public virtual bool Exist(int PERSIDEN)
         {

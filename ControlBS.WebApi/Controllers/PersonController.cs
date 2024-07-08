@@ -5,6 +5,7 @@ using ControlBS.Facade;
 using Serilog;
 using ControlBS.WebApi.Utils.Auth;
 using ControlBS.BusinessObjects.Models;
+using ControlBS.BusinessObjects.Security;
 
 namespace ControlBS.WebApi.Controllers
 {
@@ -54,6 +55,22 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
+        [HttpPost("updatePassword")]
+        public IActionResult UpdatePassword([FromBody] CTPEUP o)
+        {
+            try
+            {
+                Response<bool> oResponse = oCTPERSFacade.UpdatePassword(o);
+                return StatusCode((int)oResponse.statusCode, oResponse);
+            }
+            catch (Exception e)
+            {
+                errorResponse = new Response<ErrorResponse>(e);
+                Log.Error(errorResponse.errors.First().ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
+                throw;
+            }
+        }
 
         [HttpGet("{PERSIDEN}")]
         public IActionResult Get(int PERSIDEN)
@@ -87,5 +104,6 @@ namespace ControlBS.WebApi.Controllers
                 throw;
             }
         }
+
     }
 }
